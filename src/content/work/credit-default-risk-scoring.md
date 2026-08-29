@@ -1,67 +1,75 @@
 ---
-title: "Credit Default Risk Scoring — LightGBM vs XGBoost"
-deck: "Predicting 90-day delinquency under 14:1 class imbalance, selecting on F-beta rather than accuracy."
-eyebrow: "Case / academic — not deployed"
-order: 2
-draft: true
-repo: "https://github.com/TristanLacruz/Loan-Default-Risk-Prediction-with-Machine-Learning"
-metrics:
+title: "Credit Default Scoring — picking the metric before the model"
+description: "The model I selected is the one that scored worse on accuracy. Accuracy was the wrong question."
+kind: "Case / academic"
+stats:
   - value: "0.86"
     label: "AUC-ROC, validation"
-  - value: "51.32"
-    label: "F-beta β=2"
   - value: "150,000"
-    label: "Training rows"
+    label: "Training records"
   - value: "14:1"
     label: "Class imbalance"
+  - value: "6.7%"
+    label: "Default rate"
+repo: "https://github.com/TristanLacruz/Loan-Default-Risk-Prediction-with-Machine-Learning"
 ---
 
 ## Problem
 
-Lenders need a per-applicant probability of serious delinquency (90+ days late),
-under asymmetric cost: a missed defaulter loses the loan, a false alarm loses a
-customer. The score also has to be explainable enough to audit. Built as my
-Master's thesis. Academic, never deployed.
+Estimate the probability that a loan applicant becomes seriously delinquent —
+90 days or more past due — within a two-year horizon. Master's thesis, built on
+the public Give Me Some Credit dataset. The interesting constraint is not the
+model, it is the cost asymmetry: a missed defaulter costs the lender the
+principal, a false positive costs a rejected application.
 
 ## Data
 
-Kaggle's Give Me Some Credit: 150,000 labelled applications, 11 features, 6.7%
-positives (roughly 14:1). That rules out accuracy as a metric, since always
-predicting "no default" scores 93%. Three defects in the raw data: sentinel
-values 96 and 98 in the delinquency columns, debt ratios up to 300,000, and
-19.8% missing income. I mapped the sentinels to the observed maximum, dropped
-the extreme rows, and imputed income with the median, computed on the training
-split only.
+150,000 labelled applications, 11 features: age, monthly income, debt ratio,
+number of credit lines and mortgages, dependants, and three columns counting
+past delays at 30–59, 60–89 and 90+ days. 6.7% positive, a ratio of roughly
+14:1. Income missing in about 20% of rows; the delay columns carry the sentinel
+values 96 and 98; debt ratio reaches 300,000 in places.
 
 ## Decisions
 
-- F-beta (β=2) rather than AUC as the selection metric: recall on defaulters
-  matters more than precision here.
-- `scale_pos_weight=10` instead of SMOTE. No synthetic applicants in a regulated
-  context, and boosting reweights natively.
-- 7 engineered features, mostly ratios turning absolutes into per-household
-  terms (income per dependant, absolute monthly debt), plus flags for retirement
-  age and mortgage concentration.
-- Box-Cox (λ=0.15) against skew.
-- Both models tuned identically: RandomizedSearchCV, cv=5, 70/30 split,
-  `random_state=2020` fixed end to end.
+- Accuracy was discarded as the selection metric before any model was trained.
+  A model that always predicts "no default" scores 93.3% on this data and has
+  learned nothing. Selection ran on F-beta with β=2, which weights recall four
+  times precision — the direction the cost asymmetry actually points.
+- Treated 96 and 98 in the delay columns as coding artifacts rather than
+  observations, and replaced them with the observed maximum instead of dropping
+  the rows. Those rows are not noise; they are applicants with bad histories,
+  which is the class the model exists to find.
+- Imputation statistics computed on the training split only.
+- Handled the imbalance with `scale_pos_weight` rather than SMOTE. Synthesising
+  minority rows means interpolating between rare events that are rare for
+  reasons the interpolation does not know about.
+- Seven engineered features, including monthly debt burden as an absolute
+  amount rather than a ratio. SHAP later ranked it fifth of eighteen, which is
+  the only reason I know the feature engineering earned its place.
+- SHAP TreeExplainer for per-application attribution. A rejection a lender
+  cannot explain to the applicant is not deployable, whatever it scores.
 
 ## Result
 
-LightGBM reached AUC-ROC 0.86 on validation and F-beta(β=2) 51.32, against
-XGBoost's 50.39. XGBoost was the more accurate model (87.2% vs 85.6%) and I
-picked LightGBM anyway, because accuracy is the wrong metric at 14:1. SHAP
-(TreeExplainer) ranked revolving credit utilisation, 30–59 day delinquencies and
-age highest; my engineered monthly-debt feature came fifth.
+LightGBM at AUC-ROC 0.86 on validation, F₂ 0.513 against XGBoost's 0.504.
+XGBoost was 1.6 points more accurate on the test split and I selected LightGBM
+anyway, because accuracy was not the criterion. Utilisation of revolving credit
+and the 30–59 day delay count dominate the SHAP attributions; age pushes risk
+down.
 
 ## What I'd do differently
 
-- Fit Box-Cox on the training fold only. I fitted λ on train and test jointly,
-  which leaks distribution information. Small effect here, indefensible in
-  production.
-- Derive `scale_pos_weight` from the real ratio (~14) instead of a hand-picked
-  10.
-- Price the threshold against an explicit cost matrix rather than leaving it at
-  0.5. I argued asymmetric cost via β=2 and then never quantified it.
-- Drop MSE, RMSE and MAE. They are regression metrics that only restate the
-  error rate on a classifier.
+- Tune the classification threshold. Optimising for F₂ while scoring at the
+  default 0.5 cut-off contradicts the entire argument — the threshold is where
+  cost asymmetry gets expressed, and I never touched it. This is the largest
+  defect in the project.
+- Fit the Box-Cox lambda on the training set alone. I fitted it on train and
+  test jointly. The effect is small; the principle is the one I spend the other
+  case complaining about.
+- Derive `scale_pos_weight` from the actual 14:1 ratio or tune it. I set it to
+  10 by hand, which is neither.
+- Stop selecting on a 0.009 gap from a single split. That margin is inside the
+  noise; repeated cross-validation or a paired comparison would make the choice
+  a choice rather than a coin flip.
+- Report PR-AUC next to ROC-AUC. At 6.7% positives, ROC-AUC is generous.

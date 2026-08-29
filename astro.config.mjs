@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://tristanlacruz.github.io',
+  site: 'https://tristanlacruz.com',
   trailingSlash: 'always',
   build: {
     format: 'directory',
