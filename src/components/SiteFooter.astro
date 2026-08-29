@@ -1,0 +1,17 @@
+---
+import { site } from '../site';
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-stack-4 border-t border-rule">
+  <div
+    class="page-shell flex flex-col gap-stack-1 py-stack-3 text-small text-ink-2 sm:flex-row sm:items-baseline sm:justify-between"
+  >
+    <p>© {year} {site.name}</p>
+    <ul class="flex gap-stack-2">
+      <li><a href={`mailto:${site.email}`} class="tap">Email</a></li>
+      <li><a href={site.linkedin} rel="me noopener" class="tap">LinkedIn</a></li>
+      <li><a href={site.github} rel="me noopener" class="tap">GitHub</a></li>
+    </ul>
+  </div>
+</footer>

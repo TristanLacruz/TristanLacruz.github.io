@@ -1,0 +1,408 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Design tokens                                                       *
+ * Tailwind v4 is CSS-first: this @theme block replaces the old        *
+ * tailwind.config.mjs entirely.                                       *
+ * ------------------------------------------------------------------ */
+@theme {
+  /* Wipe Tailwind's defaults so `text-indigo-600` and friends simply
+     do not exist. Nothing can drift back toward the template look. */
+  --color-*: initial;
+  --font-*: initial;
+  --text-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+
+  /* Palette — five colours, one semantic job for the accent */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-paper: #faf9f6;
+  --color-paper-2: #f1efe9;
+  --color-rule: #dedad0;
+  --color-ink: #1a1a17;
+  --color-ink-2: #5a574e;
+  --color-accent: #8a2b1b;
+
+  /* Typography — one superfamily, three voices */
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Scale — eight steps, hand-set, mobile-first floors */
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.08em;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.65;
+
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.4;
+  --text-h3--letter-spacing: -0.005em;
+
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.55;
+  --text-lead--letter-spacing: -0.005em;
+
+  --text-h2: 1.375rem;
+  --text-h2--line-height: 1.25;
+  --text-h2--letter-spacing: -0.01em;
+
+  --text-h1: clamp(1.75rem, 1.3rem + 2.2vw, 2.25rem);
+  --text-h1--line-height: 1.15;
+  --text-h1--letter-spacing: -0.02em;
+
+  --text-display: clamp(1.75rem, 1.1rem + 3.2vw, 3rem);
+  --text-display--line-height: 1.12;
+  --text-display--letter-spacing: -0.025em;
+
+  /* Vertical rhythm — four steps, no more */
+  --spacing-stack-1: 0.75rem;
+  --spacing-stack-2: 1.5rem;
+  --spacing-stack-3: 3rem;
+  --spacing-stack-4: 4.5rem;
+
+  /* Measure — prose is narrow, data may run wider */
+  --container-prose: 62ch;
+  --container-widest: 76ch;
+
+  --radius-sm: 2px;
+}
+
+/* Page gutter: tighter on phones, roomier from 40rem up.
+   Plain custom property, not a theme token, so the media query
+   is guaranteed to win. */
+:root {
+  --page-x: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --page-x: 1.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Base                                                                *
+ * ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: var(--text-base);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  nav,
+  label,
+  th {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: text-decoration-color 150ms ease;
+  }
+
+  a:hover {
+    text-decoration-color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  ::selection {
+    background-color: var(--color-paper-2);
+    color: var(--color-ink);
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  pre {
+    background-color: var(--color-paper-2);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-stack-2);
+    overflow-x: auto;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Components                                                          *
+ * ------------------------------------------------------------------ */
+@layer components {
+  /* ---- page shell: one definition of the horizontal gutter -------- */
+  .page-shell {
+    max-width: var(--container-widest);
+    margin-inline: auto;
+    padding-inline: var(--page-x);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 50;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    padding: var(--spacing-stack-1) var(--spacing-stack-2);
+    border: 1px solid var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+  }
+
+  .skip-link:focus {
+    left: var(--page-x);
+    top: var(--spacing-stack-1);
+  }
+
+  /* Enlarges a small inline link to a 44px tap target without
+     disturbing the surrounding layout. */
+  .tap {
+    display: inline-block;
+    padding-block: 0.6875rem;
+    margin-block: -0.6875rem;
+  }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-ink-2);
+  }
+
+  .deck {
+    font-family: var(--font-serif);
+    font-size: var(--text-lead);
+    line-height: 1.55;
+    color: var(--color-ink-2);
+  }
+
+  .section-head {
+    font-size: var(--text-h2);
+    border-top: 1px solid var(--color-rule);
+    padding-top: var(--spacing-stack-2);
+  }
+
+  /* ---- metric strip: the one structural element of this site ------ */
+  .metric-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-stack-2);
+    max-width: var(--container-widest);
+    background-color: var(--color-paper-2);
+    border-top: 1px solid var(--color-rule);
+    border-bottom: 1px solid var(--color-rule);
+    padding: var(--spacing-stack-2) var(--page-x);
+    margin-inline: calc(var(--page-x) * -1);
+  }
+
+  @media (min-width: 40rem) {
+    .metric-strip {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      padding-inline: var(--spacing-stack-2);
+      margin-inline: 0;
+    }
+  }
+
+  .metric-value {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-h1);
+    line-height: 1;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metric-value--retracted {
+    color: var(--color-accent);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+
+  .metric-label {
+    display: block;
+    margin-top: var(--spacing-stack-1);
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-ink-2);
+  }
+
+  /* ---- compact metric row, used in the home listing --------------- */
+  .metric-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-stack-1) var(--spacing-stack-2);
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .metric-row__value {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    line-height: 1.2;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metric-row__value--retracted {
+    color: var(--color-accent);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 1.5px;
+  }
+
+  .metric-row__label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-ink-2);
+  }
+
+  /* ---- facts list, stacks on phones, two columns from 40rem ------- */
+  .facts {
+    max-width: var(--container-prose);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .facts > div {
+    border-bottom: 1px solid var(--color-rule);
+    padding-block: var(--spacing-stack-1);
+  }
+
+  .facts dt {
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-ink-2);
+  }
+
+  .facts dd {
+    font-size: var(--text-small);
+    margin-top: 0.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .facts > div {
+      display: grid;
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: var(--spacing-stack-2);
+      align-items: baseline;
+    }
+
+    .facts dd {
+      margin-top: 0;
+    }
+  }
+
+  /* ---- prose: six rules, no typography plugin --------------------- */
+  .prose {
+    max-width: var(--container-prose);
+  }
+
+  .prose > * + * {
+    margin-top: var(--spacing-stack-2);
+  }
+
+  .prose h2 {
+    font-size: var(--text-h2);
+    margin-top: var(--spacing-stack-3);
+    padding-top: var(--spacing-stack-2);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .prose h3 {
+    font-size: var(--text-h3);
+    margin-top: var(--spacing-stack-2);
+  }
+
+  .prose ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .prose li {
+    position: relative;
+    padding-left: 1.25em;
+    margin-top: var(--spacing-stack-1);
+  }
+
+  .prose li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--color-ink-2);
+  }
+
+  .prose strong {
+    font-weight: 600;
+  }
+
+  .prose code {
+    background-color: var(--color-paper-2);
+    padding: 0.1em 0.3em;
+    border-radius: var(--radius-sm);
+  }
+}

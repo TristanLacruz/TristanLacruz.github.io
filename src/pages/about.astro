@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site';
+---
+
+<BaseLayout
+  title={`About — ${site.shortName}`}
+  description="Background, education and certifications."
+>
+  <h1 class="max-w-prose text-h1">About</h1>
+
+  <div class="prose mt-stack-3">
+    <p>
+      I work on Dynamics 365 Business Central and NAV at Minsait (Indra Group),
+      building APIs and data pipelines that move ERP data into Power BI and
+      external systems, and maintaining integrations between BC, SAP and CRM.
+      Most of that work is diagnosing why data arrives wrong: timeouts,
+      reprocessing, validation. That is what pushed me toward machine learning.
+    </p>
+
+    <h2>Experience</h2>
+    <p>
+      <strong>Minsait (Indra Group)</strong> — Business Central developer /
+      junior ERP consultant, March 2025 to present. Multi-system integration
+      maintenance for purchasing, sales and accounting on the Grupo DomusVi
+      account.
+    </p>
+
+    <h2>Education</h2>
+    <ul>
+      <li>
+        BSc Applied Artificial Intelligence — IU Internationale Hochschule,
+        online. In progress, started 2026.
+      </li>
+      <li>
+        Specialisation in Artificial Intelligence and Big Data — DigitechFP,
+        Valencia. 2025–2026.
+      </li>
+      <li>
+        Higher Technician in Multiplatform Application Development (CFGS DAM,
+        EQF level 5) — IES Abastos, Valencia. 2023–2025.
+      </li>
+    </ul>
+
+    <h2>Certifications</h2>
+    <ul>
+      <li>Microsoft Power Platform Developer Associate (PL-400) — in progress</li>
+      <li>Microsoft Power BI Data Analyst (PL-300) — in progress</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>
+      <a href={`mailto:${site.email}`}>{site.email}</a> ·
+      <a href={site.linkedin} rel="me noopener">LinkedIn</a> ·
+      <a href={site.github} rel="me noopener">GitHub</a>
+    </p>
+  </div>
+</BaseLayout>

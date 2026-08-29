@@ -1,0 +1,124 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site';
+
+const cases = (
+  await getCollection('work', ({ data }) =>
+    import.meta.env.PROD ? !data.draft : true
+  )
+).sort((a, b) => a.data.order - b.data.order);
+
+/* The intro paragraph states how many cases are below it. Deriving the
+   number from the collection means it can never contradict the page —
+   including when a case is held back as a draft. */
+const NUMBER_WORDS = ['no', 'one', 'two', 'three', 'four', 'five'] as const;
+const caseCount = NUMBER_WORDS[cases.length] ?? String(cases.length);
+const caseNoun = cases.length === 1 ? 'project' : 'projects';
+
+const facts = [
+  {
+    term: 'Role',
+    detail: 'Business Central developer, Minsait (Indra Group) — since March 2025',
+  },
+  {
+    term: 'Looking for',
+    detail: 'Junior AI / ML engineering roles in Germany or Switzerland',
+  },
+  {
+    term: 'Languages',
+    detail:
+      'Spanish and Catalan native · English C1 (Cambridge) · German B1, working toward B2',
+  },
+  {
+    term: 'Studying',
+    detail:
+      'BSc Applied Artificial Intelligence, IU Internationale Hochschule — in progress',
+  },
+  { term: 'Based in', detail: 'Valencia, Spain · available to relocate' },
+];
+---
+
+<BaseLayout
+  title={`${site.shortName} — ${site.tagline}`}
+  description="Junior ML engineer working on production ERP data. Written-up cases, including a model I discarded because the data did not support it."
+>
+  <h1 class="max-w-prose text-display">
+    I build ML systems on production ERP data — and I report the result even when
+    the model doesn&rsquo;t work.
+  </h1>
+
+  <p class="mt-stack-3 max-w-prose deck">
+    I&rsquo;m Tristán Lacruz, a developer at Minsait (Indra Group). My day job is
+    Dynamics 365 Business Central: APIs, data pipelines, and integrations between
+    ERP, SAP and CRM for purchasing, sales and accounting — processes that fail
+    loudly when the data is wrong. Most of that work turns out to be data
+    quality, which is what pushed me toward machine learning. I&rsquo;ve written
+    up {caseCount}
+    {caseNoun} below as cases: the problem, the data, the decisions, and what I&rsquo;d
+    do differently. I&rsquo;m looking for a junior AI/ML engineering role in
+    Germany or Switzerland.
+  </p>
+
+  <h2 class="mt-stack-4 section-head">Selected work</h2>
+
+  {
+    cases.length === 0 ? (
+      <p class="mt-stack-2 max-w-prose text-ink-2">
+        Nothing published yet.
+      </p>
+    ) : (
+      <ul class="mt-stack-2">
+        {cases.map((entry) => (
+          <li class="border-b border-rule py-stack-2">
+            <p class="eyebrow">{entry.data.eyebrow}</p>
+
+            <h3 class="mt-stack-1 text-h3">
+              <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
+            </h3>
+
+            <p class="mt-stack-1 max-w-prose">{entry.data.deck}</p>
+
+            <ul class="metric-row mt-stack-2">
+              {entry.data.metrics.map((metric) => (
+                <li>
+                  <span
+                    class:list={[
+                      'metric-row__value',
+                      metric.retracted && 'metric-row__value--retracted',
+                    ]}
+                  >
+                    {metric.retracted && <span class="sr-only">Retracted: </span>}
+                    {metric.value}
+                  </span>
+                  <span class="metric-row__label">{metric.label}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <h2 class="mt-stack-4 section-head">Currently</h2>
+
+  <dl class="facts mt-stack-2">
+    {
+      facts.map((fact) => (
+        <div>
+          <dt>{fact.term}</dt>
+          <dd>{fact.detail}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <h2 class="mt-stack-4 section-head">Contact</h2>
+
+  <ul class="mt-stack-2 flex flex-wrap gap-stack-2 text-small">
+    <li><a href={`mailto:${site.email}`} class="tap">{site.email}</a></li>
+    <li><a href={site.linkedin} rel="me noopener" class="tap">LinkedIn</a></li>
+    <li><a href={site.github} rel="me noopener" class="tap">GitHub</a></li>
+  </ul>
+</BaseLayout>

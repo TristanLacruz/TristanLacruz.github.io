@@ -1,0 +1,32 @@
+---
+interface Metric {
+  value: string;
+  label: string;
+  retracted: boolean;
+}
+
+interface Props {
+  metrics: Metric[];
+}
+
+const { metrics } = Astro.props;
+---
+
+<dl class="metric-strip">
+  {
+    metrics.map((metric) => (
+      <div>
+        <dd
+          class:list={[
+            'metric-value',
+            metric.retracted && 'metric-value--retracted',
+          ]}
+        >
+          {metric.retracted && <span class="sr-only">Retracted: </span>}
+          {metric.value}
+        </dd>
+        <dt class="metric-label">{metric.label}</dt>
+      </div>
+    ))
+  }
+</dl>

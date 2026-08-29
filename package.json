@@ -1,0 +1,19 @@
+{
+  "name": "tristanlacruz-github-io",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "sync": "astro sync"
+  },
+  "dependencies": {
+    "astro": "^7.2.9"
+  }
+}

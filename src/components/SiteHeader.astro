@@ -1,0 +1,42 @@
+---
+import { site } from '../site';
+
+const path = Astro.url.pathname;
+const isHome = path === '/';
+
+const links = [
+  { href: '/', label: 'Work' },
+  { href: '/about/', label: 'About' },
+];
+---
+
+<header class="border-b border-rule">
+  <div class="page-shell flex items-baseline justify-between py-stack-2">
+    {
+      isHome ? (
+        <span class="eyebrow">{site.shortName}</span>
+      ) : (
+        <a href="/" class="eyebrow tap no-underline">
+          {site.shortName}
+        </a>
+      )
+    }
+    <nav aria-label="Main">
+      <ul class="flex gap-stack-2">
+        {
+          links.map((link) => (
+            <li>
+              
+                href={link.href}
+                class="tap text-small no-underline hover:underline"
+                aria-current={path === link.href ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
