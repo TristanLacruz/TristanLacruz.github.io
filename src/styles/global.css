@@ -123,7 +123,7 @@
   a {
     color: var(--color-ink);
     text-decoration: underline;
-    text-decoration-color: var(--color-rule);
+    text-decoration-color: var(--color-ink-2);
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
     transition: text-decoration-color 150ms ease;
