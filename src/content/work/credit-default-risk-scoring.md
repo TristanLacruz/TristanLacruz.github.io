@@ -1,8 +1,8 @@
 ---
 title: "Credit Default Scoring — picking the metric before the model"
-description: "The model I selected is the one that scored worse on accuracy. Accuracy was the wrong question."
-kind: "Case / academic"
-stats:
+deck: "The model I selected is the one that scored worse on accuracy. Accuracy was the wrong question."
+order: 2
+metrics:
   - value: "0.86"
     label: "AUC-ROC, validation"
   - value: "150,000"
@@ -11,7 +11,6 @@ stats:
     label: "Class imbalance"
   - value: "6.7%"
     label: "Default rate"
-repo: "https://github.com/TristanLacruz/Loan-Default-Risk-Prediction-with-Machine-Learning"
 ---
 
 ## Problem
