@@ -1,4 +1,2 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://tristanlacruz.github.io/sitemap-index.xml
