@@ -5,6 +5,6 @@ export const site = {
   email: 'lacruztristan@gmail.com',
   linkedin: 'https://www.linkedin.com/in/tristan-lacruz/',
   github: 'https://github.com/TristanLacruz',
-  url: 'https://tristanlacruz.github.io',
+  url: 'https://tristanlacruz.com',
   locale: 'en',
 } as const;

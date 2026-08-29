@@ -1,6 +1,7 @@
 ---
 title: "Credit Default Scoring — picking the metric before the model"
 deck: "The model I selected is the one that scored worse on accuracy. Accuracy was the wrong question."
+eyebrow: "Case / academic"
 order: 2
 metrics:
   - value: "0.86"
@@ -51,7 +52,7 @@ values 96 and 98; debt ratio reaches 300,000 in places.
 
 ## Result
 
-LightGBM at AUC-ROC 0.86 on validation, F₂ 0.513 against XGBoost's 0.504.
+LightGBM at AUC-ROC 0.86 on validation, F₂ 51.32 against XGBoost's 50.39.
 XGBoost was 1.6 points more accurate on the test split and I selected LightGBM
 anyway, because accuracy was not the criterion. Utilisation of revolving credit
 and the 30–59 day delay count dominate the SHAP attributions; age pushes risk
